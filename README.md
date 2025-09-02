@@ -1,79 +1,113 @@
-# Aetherium
+# ⚡ Aetherium AI Assistant
 
-A Windows-native, AI-powered shell with a GUI.  
-Uses Google Gemini API for natural language processing to convert user requests into Windows shell commands, executes them, and displays the output.
+![Aetherium](https://img.shields.io/badge/Aetherium-AI%2520Assistant-purple)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![Python](https://img.shields.io/badge/Python-3.8%252B-green)
+![License](https://img.shields.io/badge/License-MIT-orange)
 
-## Features
+A powerful, self-contained AI-powered command-line and graphical assistant built with custom neural networks.  
+Aetherium combines the power of machine learning with practical system utilities in a beautiful purple-and-black themed interface.
 
-- **Natural Language Interface**: Type requests in plain English.
-- **AI Powered**: Uses Gemini API (Google Generative AI).
-- **Windows Shell Execution**: Runs commands and shows results.
-- **Simple GUI**: Built with Tkinter.
+---
 
-## Getting Started
+## 📑 Table of Contents
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [📋 Usage Examples](#-usage-examples)
+- [🏗️ Project Structure](#️-project-structure)
+- [🧠 AI Architecture](#-ai-architecture)
+- [🎨 GUI Features](#-gui-features)
+- [⚙️ Configuration](#️-configuration)
+- [🔧 Advanced Usage](#-advanced-usage)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [📈 Performance Metrics](#-performance-metrics)
+- [🤝 Contributing](#-contributing)
+- [📝 License](#-license)
+- [🏆 Acknowledgments](#-acknowledgments)
+- [📞 Support](#-support)
+- [🔮 Future Roadmap](#-future-roadmap)
 
-### Prerequisites
+---
 
-- Windows (recommended)
-- Python 3.8+
-- [pip](https://pip.pypa.io/en/stable/installation/)
-- [Google AI Studio](https://aistudio.google.com/) account (free API key)
+## ✨ Features
 
-### Installation
+### 🤖 AI-Powered Intelligence
+- **Custom Neural Network** – Built-from-scratch AI model  
+- **Natural Language Processing** – Understands conversational commands  
+- **13+ Intent Categories** – File operations, system commands, coding assistance  
+- **Continuous Learning** – Improves with user interactions  
 
-1. Clone the repository:
+### 🖥️ Dual Interface
+- **CLI Mode** – Full terminal integration with Typer  
+- **GUI Mode** – Beautiful graphical interface with purple theme  
+- **Quick Actions** – One-click common commands  
 
-   ```sh
-   git clone https://github.com/SaiAmirthesh/Aetherium.git
-   cd Aetherium
-   ```
+### 🔧 System Integration
+- **File Operations** – Create, read, delete, list files  
+- **System Monitoring** – Process list, disk usage, network info  
+- **Command Execution** – Run system commands safely  
+- **Real-time Feedback** – Instant command execution and results  
 
-2. Create a virtual environment (optional but recommended):
+### 🎨 Beautiful Design
+- **Aetherium Theme** – Stunning purple and black color scheme  
+- **Modern GUI** – Intuitive and user-friendly interface  
+- **Responsive Design** – Works flawlessly on different screen sizes  
 
-   ```sh
-   python -m venv venv
-   venv\Scripts\activate
-   ```
+### 🏗️ Project Structure
 
-3. Install dependencies:
-
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-4. Set your Gemini API key as an environment variable:
-
-   - Get your API key from [Google AI Studio](https://aistudio.google.com).
-   - Set it in your environment (Windows Command Prompt):
-
-     ```sh
-     set GEMINI_API_KEY=your-gemini-api-key
-     ```
-
-### Usage
-
-```sh
-python main.py
+```graphql
+Aetherium/
+├── main.py                 # Main CLI entry point
+├── gui.py                  # Graphical user interface
+├── brain/                  # AI core components
+│   ├── __init__.py
+│   ├── model.py            # Neural network implementation
+│   ├── trainer.py          # Model training logic
+│   ├── data_generator.py   # Training data generation
+│   └── data/               # Training data and vocabulary
+├── commands/               # Command handlers
+│   ├── __init__.py
+│   ├── system.py           # System monitoring commands
+│   └── file_ops.py         # File operations
+├── config.py               # Application configuration
+├── setup.py                # Installation script
+├── requirements.txt        # Dependencies
+└── README.md               # This file
 ```
 
-Type your requests in the GUI—e.g.  
-`List all .txt files in my Documents folder.`
+### 🧠 AI Architecture
 
-The AI will generate and run the Windows command for you.
+      Neural Network Design
+      Input Layer: 50 neurons (vocabulary size)
+      Hidden Layer: 8 neurons with sigmoid activation
+      Output Layer: 13 neurons (intent categories)
+      Learning Rate: 0.1
+      Activation: Sigmoid function
 
-## Configuration
+### Training Data
 
-Edit `ai_shell/config.py` to change the Gemini model or generation parameters.
+      847+ training patterns across 13 intents
+      234-word vocabulary with comprehensive coverage
+      Automatic data generation with variations
 
-## Notes
+### Supported Intents
 
-- Output depends on the Gemini model's instruction-following capabilities.
-- For best results, use instruction-tuned models.
+      Greeting 👋
+      List Files 📁
+      Create File 📝
+      Read File 👁️
+      Delete File 🗑️
+      System Info 🖥️
+      Process List ⚡
+      Disk Usage 💾
+      Network Info 🌐
+      Run Command 🚀
+      Help ❓
+      Python Code 🐍
+      Git Operations 🔄
 
-## Contributing
+⭐ Star this repo if you find Aetherium useful!
 
-Pull requests are welcome!
+💜 Built with passion for the open source community.
 
-## License
-
-MIT
+🚀 Experience the future of CLI and GUI interaction with Aetherium AI Assistant!
