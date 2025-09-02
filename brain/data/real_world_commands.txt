@@ -1,0 +1,13 @@
+# Common user commands for training
+ls -la
+dir /w
+cd Documents
+mkdir new_folder
+touch file.txt
+echo "hello" > file.txt
+cat file.txt
+python script.py
+git status
+systeminfo
+tasklist
+ping google.com

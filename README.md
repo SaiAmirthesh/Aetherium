@@ -1,12 +1,12 @@
 # Aetherium
 
 A Windows-native, AI-powered shell with a GUI.  
-Uses Hugging Face Transformers for natural language processing to convert user requests into Windows shell commands, executes them, and displays the output.
+Uses Google Gemini API for natural language processing to convert user requests into Windows shell commands, executes them, and displays the output.
 
 ## Features
 
 - **Natural Language Interface**: Type requests in plain English.
-- **AI Powered**: Uses a local Hugging Face model (default: TinyLlama Chat).
+- **AI Powered**: Uses Gemini API (Google Generative AI).
 - **Windows Shell Execution**: Runs commands and shows results.
 - **Simple GUI**: Built with Tkinter.
 
@@ -17,6 +17,7 @@ Uses Hugging Face Transformers for natural language processing to convert user r
 - Windows (recommended)
 - Python 3.8+
 - [pip](https://pip.pypa.io/en/stable/installation/)
+- [Google AI Studio](https://aistudio.google.com/) account (free API key)
 
 ### Installation
 
@@ -40,6 +41,15 @@ Uses Hugging Face Transformers for natural language processing to convert user r
    pip install -r requirements.txt
    ```
 
+4. Set your Gemini API key as an environment variable:
+
+   - Get your API key from [Google AI Studio](https://aistudio.google.com).
+   - Set it in your environment (Windows Command Prompt):
+
+     ```sh
+     set GEMINI_API_KEY=your-gemini-api-key
+     ```
+
 ### Usage
 
 ```sh
@@ -53,12 +63,11 @@ The AI will generate and run the Windows command for you.
 
 ## Configuration
 
-Edit `ai_shell/config.py` to change the Hugging Face model or generation parameters.
+Edit `ai_shell/config.py` to change the Gemini model or generation parameters.
 
 ## Notes
 
-- First run will download the model from Hugging Face. Ensure you have a stable internet connection.
-- Output depends on the model's capabilities.
+- Output depends on the Gemini model's instruction-following capabilities.
 - For best results, use instruction-tuned models.
 
 ## Contributing
