@@ -52,10 +52,12 @@ def generate_data_command(
 def process_command(user_input):
     intent = brain.predict_intent(user_input)
     
+    # Handle different intents with enhanced capabilities
     if intent['tag'] == 'greeting':
-        return "🚀 Hello! I'm Aetherium AI Assistant. How can I help you?"
+        return "🚀 Hello! I'm Aetherium AI Assistant. How can I help you today?"
     
     elif intent['tag'] == 'list_files':
+        # Extract directory from input if specified
         words = user_input.split()
         directory = next((word for word in words if os.path.isdir(word)), ".")
         return list_files(directory)
@@ -63,18 +65,24 @@ def process_command(user_input):
     elif intent['tag'] == 'create_file':
         words = user_input.split()
         filename = next((word for word in words if '.' in word), "new_file.txt")
-        content = " ".join([word for word in words if word != filename and not word.startswith('create')])
+        content = " ".join([word for word in words if word != filename and not any(cmd in word for cmd in ['create', 'make', 'new'])])
         return create_file(filename, content)
     
     elif intent['tag'] == 'read_file':
         words = user_input.split()
         filename = next((word for word in words if '.' in word), None)
-        return read_file(filename) if filename else "Please specify a filename."
+        if filename and os.path.exists(filename):
+            return read_file(filename)
+        else:
+            return "Please specify a valid filename that exists."
     
     elif intent['tag'] == 'delete_file':
         words = user_input.split()
         filename = next((word for word in words if '.' in word), None)
-        return delete_file(filename) if filename else "Please specify a filename."
+        if filename:
+            return delete_file(filename)
+        else:
+            return "Please specify a filename to delete."
     
     elif intent['tag'] == 'system_info':
         return handle_system_command()
@@ -82,7 +90,7 @@ def process_command(user_input):
     elif intent['tag'] == 'process_list':
         return handle_process_list()
     
-    elif intent['tag'] == 'disk_info':
+    elif intent['tag'] == 'disk_usage':
         return handle_disk_usage()
     
     elif intent['tag'] == 'network_info':
@@ -92,12 +100,29 @@ def process_command(user_input):
         return handle_system_uptime()
     
     elif intent['tag'] == 'run_command':
+        # Extract command from input
         words = user_input.split()
-        command = " ".join(words[words.index('run')+1:] if 'run' in words else words[1:])
-        return execute_command(command) if command else "Please specify a command."
+        if 'run' in words:
+            command = " ".join(words[words.index('run')+1:])
+        else:
+            command = " ".join(words[1:])
+        return execute_command(command) if command else "Please specify a command to execute."
     
     elif intent['tag'] == 'help':
-        return "I can help with: files, system info, running commands, and more!"
+        return "I can help with: files, system info, running commands, and more! Type 'help' for details."
+    
+    elif intent['tag'] == 'python':
+        words = user_input.split()
+        script = next((word for word in words if '.' in word and word.endswith('.py')), None)
+        if script and os.path.exists(script):
+            return execute_command(f"python {script}")
+        else:
+            return "Please specify a valid Python script to run."
+    
+    elif intent['tag'] == 'git':
+        words = user_input.split()
+        git_command = " ".join(words[1:]) if len(words) > 1 else "status"
+        return execute_command(f"git {git_command}")
     
     else:
         return intent['response']

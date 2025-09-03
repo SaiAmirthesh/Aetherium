@@ -100,6 +100,25 @@ class TrainingDataGenerator:
                     "git status", "git commit", "git push"
                 ],
                 "responses": ["Git operations..."]
+            },
+            "list_files": {
+                "patterns": [
+                    "list files", "show files", "display files", "what files are here",
+                    "directory contents", "folder contents", "ls", "dir", "list directory",
+                    "show me the files", "what's in this folder", "display directory",
+                    "list all files", "show contents", "view files", "see files",
+                    "browse files", "explore directory", "what files do I have"
+                ],
+                "responses": ["Listing files in the current directory..."]
+            },
+            "system_info": {
+                "patterns": [
+                    "system information", "system status", "computer info",
+                    "show system", "system health", "hardware info", "system specs",
+                    "computer specifications", "what's my system", "system details",
+                    "show computer info", "display system information", "my system specs"
+                ],
+                "responses": ["Gathering system information..."]
             }
         }
     

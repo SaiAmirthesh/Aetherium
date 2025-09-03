@@ -107,27 +107,37 @@ class AetheriumBrain:
         
         return self.rule_based_fallback(text)
     
+
     def rule_based_fallback(self, text):
         text_lower = text.lower()
         
-        if any(word in text_lower for word in ['hello', 'hi', 'hey', 'greetings']):
+        # Enhanced pattern matching
+        if any(word in text_lower for word in ['hello', 'hi', 'hey', 'greetings', 'howdy']):
             return {"tag": "greeting", "response": "Hello! How can I help you today?"}
-        elif any(word in text_lower for word in ['list', 'show', 'display', 'dir', 'ls']):
+        elif any(word in text_lower for word in ['list', 'show', 'display', 'dir', 'ls', 'files', 'folder']):
             return {"tag": "list_files", "response": "I'll list the files for you."}
-        elif any(word in text_lower for word in ['create', 'make', 'new', 'touch']):
+        elif any(word in text_lower for word in ['create', 'make', 'new', 'touch', 'write']):
             return {"tag": "create_file", "response": "I can help create a file."}
-        elif any(word in text_lower for word in ['delete', 'remove', 'rm', 'del']):
+        elif any(word in text_lower for word in ['read', 'open', 'view', 'cat', 'type', 'show content']):
+            return {"tag": "read_file", "response": "I'll read the file contents."}
+        elif any(word in text_lower for word in ['delete', 'remove', 'rm', 'del', 'erase']):
             return {"tag": "delete_file", "response": "I can help delete a file."}
-        elif any(word in text_lower for word in ['system', 'info', 'status', 'health']):
+        elif any(word in text_lower for word in ['system', 'info', 'status', 'health', 'specs', 'hardware']):
             return {"tag": "system_info", "response": "Here's system information."}
-        elif any(word in text_lower for word in ['run', 'execute', 'command']):
+        elif any(word in text_lower for word in ['process', 'task', 'running', 'programs', 'applications']):
+            return {"tag": "process_list", "response": "Showing running processes."}
+        elif any(word in text_lower for word in ['disk', 'storage', 'space', 'usage', 'capacity']):
+            return {"tag": "disk_usage", "response": "Checking disk usage."}
+        elif any(word in text_lower for word in ['network', 'ip', 'connection', 'internet', 'wifi']):
+            return {"tag": "network_info", "response": "Gathering network information."}
+        elif any(word in text_lower for word in ['run', 'execute', 'command', 'cmd', 'terminal']):
             return {"tag": "run_command", "response": "I'll execute that command."}
-        elif any(word in text_lower for word in ['help', 'assist', 'support']):
-            return {"tag": "help", "response": "I'm here to help! What do you need?"}
-        elif any(word in text_lower for word in ['python', 'code', 'script']):
+        elif any(word in text_lower for word in ['python', 'code', 'script', 'py', 'program']):
             return {"tag": "python", "response": "Python code execution."}
-        elif any(word in text_lower for word in ['git', 'version', 'clone']):
+        elif any(word in text_lower for word in ['git', 'version', 'clone', 'commit', 'push']):
             return {"tag": "git", "response": "Git operations."}
+        elif any(word in text_lower for word in ['help', 'assist', 'support', 'how to', 'what can']):
+            return {"tag": "help", "response": "I'm here to help! What do you need?"}
         else:
             return {"tag": "unknown", "response": "I'm not sure how to help with that. Try asking about files, system commands, or code execution."}
     
