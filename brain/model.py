@@ -29,64 +29,133 @@ class AetheriumBrain:
         self.model_path = Path("brain/models/aetherium_model.npy")
         self.vocab_path = Path("brain/data/vocab.json")
         self.intents_path = Path("brain/data/intents.json")
+        self.windows_data_path = Path("brain/data/combined_windows_commands.json")
         
         self.load_or_initialize()
     
     def load_or_initialize(self):
+        """Load Windows command data if available, otherwise initialize with basic data"""
         self.model_path.parent.mkdir(parents=True, exist_ok=True)
         self.vocab_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Check if data files exist, generate if not
-        if not self.intents_path.exists() or not self.vocab_path.exists():
-            self.generate_missing_data()
+        # Priority 1: Load Windows command data if available
+        if self.windows_data_path.exists():
+            try:
+                with open(self.windows_data_path, 'r') as f:
+                    windows_data = json.load(f)
+                self.intents = windows_data["intents"]
+                print("✅ Loaded Windows command training data")
+                # Generate vocabulary from Windows data
+                self.generate_vocabulary_from_intents()
+                self.save_data()
+                return
+            except Exception as e:
+                print(f"❌ Error loading Windows data: {e}")
         
+        # Priority 2: Load existing model if available
         if self.model_path.exists():
             self.load_model()
         else:
+            # Priority 3: Initialize with basic data
             self.initialize_model()
-
-    def generate_missing_data(self):
-        """Generate missing data files"""
-        try:
-            from brain.data_generator import TrainingDataGenerator
-            generator = TrainingDataGenerator()
-            if not self.intents_path.exists():
-                generator.save_to_file(str(self.intents_path))
-            if not self.vocab_path.exists():
-                generator.generate_vocabulary()
-        except ImportError:
-            self.initialize_model()
-
-
+    
+    def generate_vocabulary_from_intents(self):
+        """Generate vocabulary from the loaded intents"""
+        all_words = set()
+        
+        for intent in self.intents:
+            for pattern in intent["patterns"]:
+                words = pattern.lower().split()
+                all_words.update(words)
+        
+        # Create vocabulary mapping
+        self.vocab = {word: idx for idx, word in enumerate(sorted(all_words))}
+        
+        # Save vocabulary
+        with open(self.vocab_path, 'w') as f:
+            json.dump(self.vocab, f, indent=2)
+        
+        print(f"✅ Generated vocabulary with {len(self.vocab)} words from Windows data")
+    
     def initialize_model(self):
+        """Initialize with basic Windows command vocabulary"""
+        print("⚠️  Initializing with basic Windows command data...")
+        
+        # Basic Windows command vocabulary
         self.vocab = {
-            'hello': 0, 'hi': 0, 'hey': 0, 'greetings': 0,
-            'list': 1, 'show': 1, 'display': 1, 'dir': 1, 'ls': 1,
-            'create': 2, 'make': 2, 'new': 2, 'touch': 2,
-            'delete': 3, 'remove': 3, 'rm': 3, 'del': 3,
-            'file': 4, 'files': 4, 'directory': 4, 'folder': 4,
-            'system': 5, 'process': 5, 'task': 5, 'info': 5,
-            'run': 6, 'execute': 6, 'command': 6,
-            'help': 7, 'assist': 7, 'support': 7,
-            'python': 8, 'script': 8, 'code': 8,
-            'git': 9, 'version': 9, 'clone': 9
+            # File operations
+            'dir': 0, 'ls': 0, 'list': 0, 'files': 0, 'show': 0,
+            'copy': 1, 'cp': 1, 'move': 1, 'mv': 1, 'rename': 1, 'ren': 1,
+            'del': 2, 'delete': 2, 'rm': 2, 'remove': 2, 'erase': 2,
+            'mkdir': 3, 'md': 3, 'create': 3, 'make': 3, 'new': 3,
+            
+            # System commands
+            'systeminfo': 4, 'system': 4, 'info': 4, 'information': 4,
+            'tasklist': 5, 'task': 5, 'process': 5, 'processes': 5,
+            'ipconfig': 6, 'ip': 6, 'network': 6, 'config': 6,
+            'ping': 7, 'net': 7, 'connection': 7,
+            
+            # Common words
+            'how': 8, 'to': 8, 'use': 8, 'run': 8, 'execute': 8,
+            'what': 9, 'does': 9, 'do': 9, 'explain': 9,
+            'windows': 10, 'cmd': 10, 'command': 10, 'prompt': 10,
+            
+            # File types and objects
+            'file': 11, 'files': 11, 'document': 11, 'folder': 11,
+            'text': 12, 'txt': 12, 'python': 12, 'py': 12,
+            
+            # Help and greetings
+            'help': 13, 'please': 13, 'assist': 13, 'support': 13,
+            'hello': 14, 'hi': 14, 'hey': 14, 'greetings': 14
         }
         
+        # Basic Windows command intents
         self.intents = [
-            {"tag": "greeting", "patterns": ["hello", "hi", "hey", "greetings"], "responses": ["Hello!", "Hi there!", "Hey! How can I help?"]},
-            {"tag": "list_files", "patterns": ["list files", "show files", "display files", "dir", "ls"], "responses": ["Listing files..."]},
-            {"tag": "create_file", "patterns": ["create file", "make file", "new file", "touch file"], "responses": ["Creating file..."]},
-            {"tag": "delete_file", "patterns": ["delete file", "remove file", "rm file", "del file"], "responses": ["Deleting file..."]},
-            {"tag": "system_info", "patterns": ["system info", "system status", "system health"], "responses": ["Showing system information..."]},
-            {"tag": "run_command", "patterns": ["run command", "execute command", "run program"], "responses": ["Executing command..."]},
-            {"tag": "help", "patterns": ["help", "assist", "support", "how to"], "responses": ["I'm here to help!"]},
-            {"tag": "python", "patterns": ["python script", "run python", "execute code"], "responses": ["Running Python code..."]},
-            {"tag": "git", "patterns": ["git command", "version control", "clone repo"], "responses": ["Git operations..."]}
+            {
+                "tag": "file_management",
+                "patterns": [
+                    "list files", "show files", "dir", "ls", "display files",
+                    "copy file", "move file", "rename file", "delete file",
+                    "create folder", "make directory", "remove file"
+                ],
+                "responses": ["Performing file operation..."]
+            },
+            {
+                "tag": "system_info", 
+                "patterns": [
+                    "system information", "system info", "system status",
+                    "computer info", "show system", "windows info"
+                ],
+                "responses": ["Gathering system information..."]
+            },
+            {
+                "tag": "network_commands",
+                "patterns": [
+                    "ip config", "network configuration", "ipconfig",
+                    "ping address", "test connection", "network status"
+                ],
+                "responses": ["Executing network command..."]
+            },
+            {
+                "tag": "process_management",
+                "patterns": [
+                    "task list", "running processes", "show tasks",
+                    "process list", "taskkill", "end process"
+                ],
+                "responses": ["Managing processes..."]
+            },
+            {
+                "tag": "greeting",
+                "patterns": ["hello", "hi", "hey", "greetings", "howdy"],
+                "responses": ["Hello! How can I help with Windows commands?"]
+            }
         ]
         
         self.save_data()
+        print("✅ Initialized with basic Windows command data")
     
     def text_to_vector(self, text):
+        """Convert text to numerical vector using current vocabulary"""
         words = text.lower().split()
         vector = np.zeros(len(self.vocab))
         
@@ -97,66 +166,110 @@ class AetheriumBrain:
         return vector
     
     def predict_intent(self, text):
+        """Predict the intent of user input with Windows command focus"""
         vector = self.text_to_vector(text)
         
+        # If model is trained, use it
         if self.model:
             prediction = self.model.predict(vector.reshape(1, -1))
-            if np.max(prediction) > 0.5:
+            if np.max(prediction) > 0.3:  # Lower threshold for better matching
                 intent_idx = np.argmax(prediction)
-                return {"tag": self.intents[intent_idx]["tag"], "response": np.random.choice(self.intents[intent_idx]["responses"])}
+                return {
+                    "tag": self.intents[intent_idx]["tag"], 
+                    "response": np.random.choice(self.intents[intent_idx]["responses"])
+                }
         
-        return self.rule_based_fallback(text)
+        # Fallback to rule-based matching for Windows commands
+        return self.windows_rule_based_fallback(text)
     
-
-    def rule_based_fallback(self, text):
+    def windows_rule_based_fallback(self, text):
+        """Rule-based intent matching optimized for Windows commands"""
         text_lower = text.lower()
         
-        # Enhanced pattern matching
-        if any(word in text_lower for word in ['hello', 'hi', 'hey', 'greetings', 'howdy']):
-            return {"tag": "greeting", "response": "Hello! How can I help you today?"}
-        elif any(word in text_lower for word in ['list', 'show', 'display', 'dir', 'ls', 'files', 'folder']):
+        # Windows command specific matching
+        if any(word in text_lower for word in ['hello', 'hi', 'hey', 'greetings']):
+            return {"tag": "greeting", "response": "Hello! I can help with Windows commands."}
+        
+        elif any(word in text_lower for word in ['list', 'show', 'display', 'dir', 'ls', 'files']):
             return {"tag": "list_files", "response": "I'll list the files for you."}
+        
         elif any(word in text_lower for word in ['create', 'make', 'new', 'touch', 'write']):
-            return {"tag": "create_file", "response": "I can help create a file."}
+            return {"tag": "create_file", "response": "I can help create a file or folder."}
+        
         elif any(word in text_lower for word in ['read', 'open', 'view', 'cat', 'type', 'show content']):
             return {"tag": "read_file", "response": "I'll read the file contents."}
+        
         elif any(word in text_lower for word in ['delete', 'remove', 'rm', 'del', 'erase']):
-            return {"tag": "delete_file", "response": "I can help delete a file."}
-        elif any(word in text_lower for word in ['system', 'info', 'status', 'health', 'specs', 'hardware']):
+            return {"tag": "delete_file", "response": "I can help delete files."}
+        
+        elif any(word in text_lower for word in ['system', 'info', 'status', 'health', 'specs', 'computer']):
             return {"tag": "system_info", "response": "Here's system information."}
-        elif any(word in text_lower for word in ['process', 'task', 'running', 'programs', 'applications']):
+        
+        elif any(word in text_lower for word in ['process', 'task', 'running', 'programs', 'tasklist']):
             return {"tag": "process_list", "response": "Showing running processes."}
-        elif any(word in text_lower for word in ['disk', 'storage', 'space', 'usage', 'capacity']):
+        
+        elif any(word in text_lower for word in ['network', 'ip', 'connection', 'internet', 'ping', 'ipconfig']):
+            return {"tag": "network_info", "response": "Executing network command."}
+        
+        elif any(word in text_lower for word in ['disk', 'storage', 'space', 'usage', 'capacity', 'df']):
             return {"tag": "disk_usage", "response": "Checking disk usage."}
-        elif any(word in text_lower for word in ['network', 'ip', 'connection', 'internet', 'wifi']):
-            return {"tag": "network_info", "response": "Gathering network information."}
-        elif any(word in text_lower for word in ['run', 'execute', 'command', 'cmd', 'terminal']):
-            return {"tag": "run_command", "response": "I'll execute that command."}
-        elif any(word in text_lower for word in ['python', 'code', 'script', 'py', 'program']):
-            return {"tag": "python", "response": "Python code execution."}
-        elif any(word in text_lower for word in ['git', 'version', 'clone', 'commit', 'push']):
-            return {"tag": "git", "response": "Git operations."}
-        elif any(word in text_lower for word in ['help', 'assist', 'support', 'how to', 'what can']):
-            return {"tag": "help", "response": "I'm here to help! What do you need?"}
+        
+        # ADD THESE NEW INTENTS FOR ADVANCED COMMANDS:
+        elif any(word in text_lower for word in ['uptime', 'boot time', 'system uptime', 'how long running']):
+            return {"tag": "system_uptime", "response": "Checking system uptime..."}
+        
+        elif any(word in text_lower for word in ['users', 'logged in', 'who is online', 'current users']):
+            return {"tag": "users_online", "response": "Showing logged in users..."}
+        
+        elif any(word in text_lower for word in ['environment', 'env', 'variables', 'path', 'home']):
+            return {"tag": "environment_vars", "response": "Showing environment variables..."}
+        
+        elif any(word in text_lower for word in ['services', 'running services', 'windows services', 'service status']):
+            return {"tag": "running_services", "response": "Checking running services..."}
+        
+        elif any(word in text_lower for word in ['run', 'execute', 'command', 'cmd', 'windows']):
+            # Extract the actual command to run
+            words = text_lower.split()
+            potential_commands = [word for word in words if word in [
+                'dir', 'copy', 'move', 'del', 'mkdir', 'systeminfo', 'tasklist', 
+                'ipconfig', 'ping', 'netstat', 'chkdsk', 'format', 'uptime'
+            ]]
+            
+            if potential_commands:
+                return {"tag": "command_execution", "response": f"Executing {potential_commands[0]} command..."}
+            else:
+                return {"tag": "command_execution", "response": "I'll execute that command."}
+        
+        elif any(word in text_lower for word in ['help', 'assist', 'support', 'how to']):
+            return {"tag": "help", "response": "I can help with Windows commands like dir, copy, systeminfo, tasklist, ipconfig, uptime, etc."}
+        
         else:
-            return {"tag": "unknown", "response": "I'm not sure how to help with that. Try asking about files, system commands, or code execution."}
+            return {"tag": "unknown", "response": "I'm not sure about that Windows command. Try: dir, copy, systeminfo, tasklist, ipconfig, uptime"}
+    
     
     def save_data(self):
-        np.save(self.model_path, {
-            'weights1': self.model.weights1 if self.model else np.random.randn(50, 8),
-            'weights2': self.model.weights2 if self.model else np.random.randn(8, 10),
-            'bias1': self.model.bias1 if self.model else np.zeros((1, 8)),
-            'bias2': self.model.bias2 if self.model else np.zeros((1, 10))
-        })
+        """Save model and data"""
+        # Save model weights if model exists
+        if self.model:
+            np.save(self.model_path, {
+                'weights1': self.model.weights1,
+                'weights2': self.model.weights2,
+                'bias1': self.model.bias1,
+                'bias2': self.model.bias2
+            })
         
+        # Save vocabulary
         with open(self.vocab_path, 'w') as f:
-            json.dump(self.vocab, f)
+            json.dump(self.vocab, f, indent=2)
         
+        # Save intents
         with open(self.intents_path, 'w') as f:
-            json.dump(self.intents, f)
+            json.dump({"intents": self.intents}, f, indent=2)
     
     def load_model(self):
+        """Load saved model and data"""
         try:
+            # Load model weights
             data = np.load(self.model_path, allow_pickle=True).item()
             self.model = NeuralNetwork(len(self.vocab), 8, len(self.intents))
             self.model.weights1 = data['weights1']
@@ -164,12 +277,30 @@ class AetheriumBrain:
             self.model.bias1 = data['bias1']
             self.model.bias2 = data['bias2']
             
+            # Load vocabulary
             with open(self.vocab_path, 'r') as f:
                 self.vocab = json.load(f)
             
+            # Load intents
             with open(self.intents_path, 'r') as f:
-                self.intents = json.load(f)
+                self.intents = json.load(f)["intents"]
+                
+            print("✅ Loaded trained model and data")
                 
         except Exception as e:
-            print(f"Error loading model: {e}")
+            print(f"❌ Error loading model: {e}")
+            print("⚠️  Falling back to rule-based system")
             self.initialize_model()
+
+    def get_available_commands(self):
+        """Return list of available Windows commands for help"""
+        commands = set()
+        for intent in self.intents:
+            if "file_management" in intent["tag"]:
+                commands.update(["dir", "copy", "move", "del", "mkdir", "rmdir"])
+            elif "system_info" in intent["tag"]:
+                commands.update(["systeminfo", "tasklist", "whoami"])
+            elif "network_commands" in intent["tag"]:
+                commands.update(["ipconfig", "ping", "netstat"])
+        
+        return sorted(commands)

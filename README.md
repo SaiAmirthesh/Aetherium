@@ -1,113 +1,354 @@
 # ⚡ Aetherium AI Assistant
 
-![Aetherium](https://img.shields.io/badge/Aetherium-AI%2520Assistant-purple)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![Python](https://img.shields.io/badge/Python-3.8%252B-green)
-![License](https://img.shields.io/badge/License-MIT-orange)
+A powerful AI-powered CLI and GUI assistant with custom neural network capabilities, designed for Windows command management and system administration.
 
-A powerful, self-contained AI-powered command-line and graphical assistant built with custom neural networks.  
-Aetherium combines the power of machine learning with practical system utilities in a beautiful purple-and-black themed interface.
+## 🚀 Features
 
----
+### Core AI Capabilities
+- **Custom Neural Network**: Built-in AI model for intelligent command recognition
+- **Natural Language Processing**: Understand commands in plain English
+- **Intent Recognition**: Automatically detects user intent from natural language
+- **Learning Capabilities**: Can be trained on custom datasets
 
-## 📑 Table of Contents
-- [✨ Features](#-features)
-- [🚀 Quick Start](#-quick-start)
-- [📋 Usage Examples](#-usage-examples)
-- [🏗️ Project Structure](#️-project-structure)
-- [🧠 AI Architecture](#-ai-architecture)
-- [🎨 GUI Features](#-gui-features)
-- [⚙️ Configuration](#️-configuration)
-- [🔧 Advanced Usage](#-advanced-usage)
-- [🐛 Troubleshooting](#-troubleshooting)
-- [📈 Performance Metrics](#-performance-metrics)
-- [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
-- [🏆 Acknowledgments](#-acknowledgments)
-- [📞 Support](#-support)
-- [🔮 Future Roadmap](#-future-roadmap)
+### System Management
+- **System Information**: Complete system specs, hardware info, and status
+- **Process Management**: View running processes, system tasks, and performance
+- **Network Tools**: IP configuration, network status, connection testing
+- **Disk Management**: Storage usage, disk health, and space monitoring
+- **User Management**: Logged-in users, user accounts, and permissions
+- **Service Management**: Windows services status and management
+- **Environment Variables**: System and user environment configuration
 
----
+### File Operations
+- **File Listing**: Directory browsing with detailed file information
+- **File Creation**: Create new files with custom content
+- **File Reading**: View file contents and metadata
+- **File Deletion**: Safe file removal with confirmation
+- **Directory Management**: Create and remove directories
+- **File Information**: Detailed file properties and statistics
 
-## ✨ Features
+### Command Execution
+- **System Commands**: Execute Windows commands and PowerShell cmdlets
+- **Batch Operations**: Run multiple commands in sequence
+- **Command History**: Track and repeat previous commands
+- **Error Handling**: Comprehensive error reporting and recovery
 
-### 🤖 AI-Powered Intelligence
-- **Custom Neural Network** – Built-from-scratch AI model  
-- **Natural Language Processing** – Understands conversational commands  
-- **13+ Intent Categories** – File operations, system commands, coding assistance  
-- **Continuous Learning** – Improves with user interactions  
+## 🛠️ Installation
 
-### 🖥️ Dual Interface
-- **CLI Mode** – Full terminal integration with Typer  
-- **GUI Mode** – Beautiful graphical interface with purple theme  
-- **Quick Actions** – One-click common commands  
+### Prerequisites
+- Python 3.7+
+- Windows 10/11 (primary target)
+- PowerShell (for advanced features)
 
-### 🔧 System Integration
-- **File Operations** – Create, read, delete, list files  
-- **System Monitoring** – Process list, disk usage, network info  
-- **Command Execution** – Run system commands safely  
-- **Real-time Feedback** – Instant command execution and results  
+### Quick Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Aetherium
 
-### 🎨 Beautiful Design
-- **Aetherium Theme** – Stunning purple and black color scheme  
-- **Modern GUI** – Intuitive and user-friendly interface  
-- **Responsive Design** – Works flawlessly on different screen sizes  
+# Install dependencies
+python setup.py
 
-### 🏗️ Project Structure
+# Generate training data
+python main.py generate-data
 
-```graphql
+# Train the AI model
+python main.py train
+```
+
+### Manual Installation
+```bash
+# Install required packages
+pip install typer numpy psutil
+
+# Generate training data
+python brain/data_generator.py
+
+# Merge Windows command data
+python windows_data_merger.py
+```
+
+## 📖 Usage
+
+### CLI Mode
+```bash
+# Interactive chat mode
+python main.py chat
+
+# Direct command execution
+python main.py chat "list files"
+
+# System information
+python main.py system
+
+# Process management
+python main.py processes
+
+# Network information
+python main.py network
+
+# Disk usage
+python main.py disk
+
+# System uptime
+python main.py uptime
+
+# User management
+python main.py users
+
+# Environment variables
+python main.py env
+
+# Service management
+python main.py services
+
+# File operations
+python main.py files [directory]
+python main.py create <filename> [content]
+python main.py read <filename>
+python main.py delete <filename>
+
+# Execute custom commands
+python main.py run <command>
+```
+
+### GUI Mode
+```bash
+# Launch graphical interface
+python main.py gui
+```
+
+The GUI provides:
+- **Command Input**: Natural language command entry
+- **Quick Actions**: One-click access to common operations
+- **Real-time Output**: Live command execution results
+- **Visual Feedback**: Color-coded responses and status indicators
+
+### Chat Mode Examples
+```
+You: hello
+Aetherium: 🚀 Hello! I'm Aetherium AI Assistant. How can I help you today?
+
+You: show me my files
+Aetherium: 📁 Listing files in the current directory...
+
+You: what's my system info?
+Aetherium: 🖥️ Gathering system information...
+
+You: check disk space
+Aetherium: 💾 Checking disk usage...
+
+You: who is logged in?
+Aetherium: 👥 Showing logged in users...
+
+You: show running services
+Aetherium: 🔧 Checking running services...
+
+You: create a test file
+Aetherium: 📝 Creating a new file...
+```
+
+## 🧠 AI Model
+
+### Architecture
+- **Input Layer**: Vocabulary-based text vectorization
+- **Hidden Layer**: 8 neurons with sigmoid activation
+- **Output Layer**: Intent classification with confidence scoring
+- **Training**: Backpropagation with customizable learning rate
+
+### Training Data
+- **Windows Commands**: Comprehensive CMD and PowerShell patterns
+- **System Administration**: Administrative and troubleshooting commands
+- **File Operations**: File and directory management patterns
+- **Natural Language**: Human-readable command variations
+
+### Customization
+```python
+# Train with custom data
+from brain import ModelTrainer
+trainer = ModelTrainer(brain)
+trainer.train_model(epochs=2000, learning_rate=0.05)
+
+# Add custom intents
+brain.intents.append({
+    "tag": "custom_operation",
+    "patterns": ["custom command", "special operation"],
+    "responses": ["Executing custom operation..."]
+})
+```
+
+## 🔧 Configuration
+
+### Model Settings
+```python
+# config.py
+MODEL_CONFIG = {
+    "input_size": 50,
+    "hidden_size": 8,
+    "output_size": 10,
+    "learning_rate": 0.1,
+    "epochs": 1000
+}
+```
+
+### GUI Theme
+```python
+# config.py
+GUI_CONFIG = {
+    "theme": "dark",
+    "window_size": "800x600",
+    "font_family": "Arial",
+    "font_size": 10
+}
+```
+
+### Command Security
+```python
+# config.py
+COMMAND_CONFIG = {
+    "safe_mode": True,
+    "confirm_destructive_actions": True,
+    "allowed_commands": ["dir", "systeminfo", "tasklist"]
+}
+```
+
+## 📁 Project Structure
+```
 Aetherium/
-├── main.py                 # Main CLI entry point
-├── gui.py                  # Graphical user interface
-├── brain/                  # AI core components
+├── brain/                   # AI core components
 │   ├── __init__.py
 │   ├── model.py            # Neural network implementation
 │   ├── trainer.py          # Model training logic
 │   ├── data_generator.py   # Training data generation
-│   └── data/               # Training data and vocabulary
-├── commands/               # Command handlers
+│   ├── data/               # Training datasets
+│   └── models/             # Saved AI models
+├── commands/                # Command implementations
 │   ├── __init__.py
-│   ├── system.py           # System monitoring commands
-│   └── file_ops.py         # File operations
-├── config.py               # Application configuration
-├── setup.py                # Installation script
-├── requirements.txt        # Dependencies
+│   ├── system.py           # System management commands
+│   └── file_ops.py         # File operation commands
+├── main.py                  # CLI entry point
+├── gui.py                   # GUI implementation
+├── config.py                # Configuration settings
+├── setup.py                 # Installation script
+├── test_features.py         # Feature testing
 └── README.md               # This file
 ```
 
-### 🧠 AI Architecture
+## 🧪 Testing
 
-      Neural Network Design
-      Input Layer: 50 neurons (vocabulary size)
-      Hidden Layer: 8 neurons with sigmoid activation
-      Output Layer: 13 neurons (intent categories)
-      Learning Rate: 0.1
-      Activation: Sigmoid function
+### Run All Tests
+```bash
+python test_features.py
+```
 
-### Training Data
+### Test Specific Features
+```bash
+# Test CLI
+python main.py help
 
-      847+ training patterns across 13 intents
-      234-word vocabulary with comprehensive coverage
-      Automatic data generation with variations
+# Test GUI
+python main.py gui
 
-### Supported Intents
+# Test AI model
+python -c "from brain import AetheriumBrain; brain = AetheriumBrain(); print(brain.predict_intent('hello'))"
+```
 
-      Greeting 👋
-      List Files 📁
-      Create File 📝
-      Read File 👁️
-      Delete File 🗑️
-      System Info 🖥️
-      Process List ⚡
-      Disk Usage 💾
-      Network Info 🌐
-      Run Command 🚀
-      Help ❓
-      Python Code 🐍
-      Git Operations 🔄
+## 🚨 Troubleshooting
 
-⭐ Star this repo if you find Aetherium useful!
+### Common Issues
 
-💜 Built with passion for the open source community.
+**Import Errors**
+```bash
+# Ensure proper Python path
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+# or
+python -m pip install -e .
+```
 
-🚀 Experience the future of CLI and GUI interaction with Aetherium AI Assistant!
+**Missing Dependencies**
+```bash
+# Install required packages
+pip install -r requirements.txt
+```
+
+**Model Training Issues**
+```bash
+# Regenerate training data
+python main.py generate-data --overwrite
+
+# Retrain model
+python main.py train
+```
+
+**Permission Errors**
+- Run as Administrator for system-level operations
+- Check file/directory permissions
+- Ensure PowerShell execution policy allows scripts
+
+### Debug Mode
+```python
+# Enable debug logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Test individual components
+from brain import AetheriumBrain
+brain = AetheriumBrain()
+print(f"Vocabulary size: {len(brain.vocab)}")
+print(f"Intents: {[i['tag'] for i in brain.intents]}")
+```
+
+## 🤝 Contributing
+
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Implement your changes
+4. Add tests for new features
+5. Submit a pull request
+
+### Adding New Commands
+```python
+# commands/new_feature.py
+def handle_new_feature():
+    """Handle new feature command"""
+    try:
+        # Implementation here
+        return "✅ Feature executed successfully"
+    except Exception as e:
+        return f"❌ Error: {e}"
+
+# commands/__init__.py
+from .new_feature import handle_new_feature
+COMMAND_HANDLERS['new_feature'] = handle_new_feature
+```
+
+### Adding New Intents
+```python
+# brain/data_generator.py
+"new_intent": {
+    "patterns": ["new command", "new operation"],
+    "responses": ["Executing new operation..."]
+}
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **Neural Network Implementation**: Custom implementation for educational purposes
+- **Windows Commands**: Comprehensive Windows command reference
+- **GUI Framework**: Tkinter for cross-platform compatibility
+- **CLI Framework**: Typer for modern command-line interfaces
+
+## 📞 Support
+
+- **Issues**: Report bugs and feature requests on GitHub
+- **Documentation**: Check the wiki for detailed guides
+- **Community**: Join discussions in the community forum
+
+---
+
+**⚡ Aetherium AI Assistant** - Empowering users with intelligent system management through AI-powered natural language commands.

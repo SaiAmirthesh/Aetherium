@@ -2,6 +2,7 @@ import typer
 from typing import Annotated, Optional, List
 import sys
 import os
+from pathlib import Path
 from brain.data_generator import generate_training_data
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -13,6 +14,9 @@ from commands import (
     handle_disk_usage,
     handle_network_info,
     handle_system_uptime,
+    handle_users_logged_in,
+    handle_environment_variables,
+    handle_running_services,
     list_files,
     create_file,
     read_file,
@@ -57,7 +61,6 @@ def process_command(user_input):
         return "🚀 Hello! I'm Aetherium AI Assistant. How can I help you today?"
     
     elif intent['tag'] == 'list_files':
-        # Extract directory from input if specified
         words = user_input.split()
         directory = next((word for word in words if os.path.isdir(word)), ".")
         return list_files(directory)
@@ -96,11 +99,20 @@ def process_command(user_input):
     elif intent['tag'] == 'network_info':
         return handle_network_info()
     
-    elif intent['tag'] == 'uptime':
+    # ADD THESE NEW COMMAND HANDLERS:
+    elif intent['tag'] == 'system_uptime':
         return handle_system_uptime()
     
-    elif intent['tag'] == 'run_command':
-        # Extract command from input
+    elif intent['tag'] == 'users_online':
+        return handle_users_logged_in()
+    
+    elif intent['tag'] == 'environment_vars':
+        return handle_environment_variables()
+    
+    elif intent['tag'] == 'running_services':
+        return handle_running_services()
+    
+    elif intent['tag'] == 'command_execution':
         words = user_input.split()
         if 'run' in words:
             command = " ".join(words[words.index('run')+1:])
@@ -109,20 +121,7 @@ def process_command(user_input):
         return execute_command(command) if command else "Please specify a command to execute."
     
     elif intent['tag'] == 'help':
-        return "I can help with: files, system info, running commands, and more! Type 'help' for details."
-    
-    elif intent['tag'] == 'python':
-        words = user_input.split()
-        script = next((word for word in words if '.' in word and word.endswith('.py')), None)
-        if script and os.path.exists(script):
-            return execute_command(f"python {script}")
-        else:
-            return "Please specify a valid Python script to run."
-    
-    elif intent['tag'] == 'git':
-        words = user_input.split()
-        git_command = " ".join(words[1:]) if len(words) > 1 else "status"
-        return execute_command(f"git {git_command}")
+        return "I can help with: files, system info, processes, network, disk usage, uptime, users, environment variables, services, and more!"
     
     else:
         return intent['response']
@@ -215,7 +214,26 @@ def network_info_command():
 
 @app.command(name="uptime")
 def uptime_command():
+    """Show system uptime"""
     result = handle_system_uptime()
+    print(result)
+
+@app.command(name="users")
+def users_command():
+    """Show logged in users"""
+    result = handle_users_logged_in()
+    print(result)
+
+@app.command(name="env")
+def env_command():
+    """Show environment variables"""
+    result = handle_environment_variables()
+    print(result)
+
+@app.command(name="services")
+def services_command():
+    """Show running services"""
+    result = handle_running_services()
     print(result)
 
 @app.command(name="train")
@@ -243,9 +261,14 @@ def show_help():
   disk              - Show disk usage
   network           - Show network information
   uptime            - Show system uptime
+  users             - Show logged in users
+  env               - Show environment variables
+  services          - Show running services
+  generate-data     - Generate training data
   train             - Train the AI model
   help              - Show this help
   gui               - Launch GUI interface
+  version           - Show version information
 
 💬 Examples:
   aetherium chat "list files"
@@ -253,6 +276,10 @@ def show_help():
   aetherium files C:\\
   aetherium create test.txt "Hello"
   aetherium system
+  aetherium uptime
+  aetherium users
+  aetherium env
+  aetherium services
 
 🔧 AI Model: Custom Neural Network
 """

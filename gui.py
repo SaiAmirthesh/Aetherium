@@ -9,6 +9,13 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from brain import AetheriumBrain
 from commands import (
     handle_system_command,
+    handle_process_list,
+    handle_disk_usage,
+    handle_network_info,
+    handle_system_uptime,
+    handle_users_logged_in,
+    handle_environment_variables,
+    handle_running_services,
     list_files,
     create_file,
     read_file,
@@ -189,10 +196,14 @@ class AetheriumGUI:
             ("🖥️ SYSTEM INFO", "system info"),
             ("⚡ PROCESSES", "running processes"),
             ("💾 DISK USAGE", "disk usage"),
+            ("🌐 NETWORK", "network information"),
+            ("⏰ UPTIME", "system uptime"),
+            ("👥 USERS", "users online"),
+            ("🌍 ENV VARS", "environment variables"),
+            ("🔧 SERVICES", "running services"),
             ("📝 CREATE FILE", "create test.txt"),
             ("👁️ READ FILE", "read test.txt"),
-            ("🌐 NETWORK", "network information"),
-            ("⏰ UPTIME", "system uptime")
+            ("🗑️ DELETE FILE", "delete test.txt")
         ]
         
         for i, (text, cmd) in enumerate(quick_commands):
@@ -282,10 +293,29 @@ class AetheriumGUI:
                 response = delete_file(filename) if filename else "Please specify a filename."
             elif intent['tag'] == 'system_info':
                 response = handle_system_command()
-            elif intent['tag'] == 'run_command':
+            elif intent['tag'] == 'process_list':
+                response = handle_process_list()
+            elif intent['tag'] == 'disk_usage':
+                response = handle_disk_usage()
+            elif intent['tag'] == 'network_info':
+                response = handle_network_info()
+            elif intent['tag'] == 'system_uptime':
+                response = handle_system_uptime()
+            elif intent['tag'] == 'users_online':
+                response = handle_users_logged_in()
+            elif intent['tag'] == 'environment_vars':
+                response = handle_environment_variables()
+            elif intent['tag'] == 'running_services':
+                response = handle_running_services()
+            elif intent['tag'] == 'command_execution':
                 words = user_input.split()
-                command = " ".join(words[words.index('run')+1:] if 'run' in words else words[1:])
+                if 'run' in words:
+                    command = " ".join(words[words.index('run')+1:])
+                else:
+                    command = " ".join(words[1:])
                 response = execute_command(command) if command else "Please specify a command."
+            elif intent['tag'] == 'help':
+                response = "I can help with: files, system info, processes, network, disk usage, uptime, users, environment variables, services, and more!"
             else:
                 response = intent['response']
             
